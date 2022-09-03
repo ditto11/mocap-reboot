@@ -6,7 +6,8 @@ using Neuron;
 public class CharacterSwap : MonoBehaviour, SwapInterface
 {
     [SerializeField] GameObject actor;
-    [SerializeField] List<GameObject> allChoices = new List<GameObject>();
+    List<GameObject> allChoices = new List<GameObject>();
+    [SerializeField] int actorID;
 
     private int currentChoice;
     private NeuronTransformsInstance transformInstance;
@@ -15,6 +16,7 @@ public class CharacterSwap : MonoBehaviour, SwapInterface
     void Start()
     {
         transformInstance = actor.GetComponent<NeuronTransformsInstance>();
+        StartCoroutine(startInactiveDelay());
     }
 
     // Update is called once per frame
@@ -25,16 +27,23 @@ public class CharacterSwap : MonoBehaviour, SwapInterface
 
     public void SetChoice(int choiceIndex)
     {
-        foreach (Transform child in actor.transform) {
-            GameObject.Destroy(child.gameObject);
+        foreach (GameObject child in allChoices) {
+            child.SetActive(false);
         }
-        StartCoroutine(setChoiceDelay(choiceIndex));
+        allChoices[choiceIndex].SetActive(true);
     }
 
     IEnumerator setChoiceDelay(int choiceIndex) {
         yield return new WaitForSeconds(.1f);
-        GameObject newModel = Instantiate(allChoices[choiceIndex], actor.transform);
-        transformInstance.Bind(newModel.transform, "");
+        //transformInstance.Bind(actor.transform.GetChild(0), "");
+    }
+
+    IEnumerator startInactiveDelay() {
+        yield return new WaitForSeconds(0.1f);
+        foreach (Transform child in actor.transform) {
+            allChoices.Add(child.gameObject);
+            child.gameObject.SetActive(false);
+        }
     }
 
     public List<GameObject> ReturnChoices()
