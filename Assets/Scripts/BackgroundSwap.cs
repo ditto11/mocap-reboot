@@ -5,8 +5,6 @@ using Neuron;
 
 public class BackgroundSwap : MonoBehaviour, SwapInterface
 {
-    List<GameObject> walls = new List<GameObject>();
-    // Walls in order are: back, left, right, floor
     [SerializeField] List<GameObject> allChoices;
 
     private int currentChoice;
@@ -15,9 +13,7 @@ public class BackgroundSwap : MonoBehaviour, SwapInterface
     // Start is called before the first frame update
     void Start()
     {
-        foreach (Transform child in transform) {
-            walls.Add(child.gameObject);
-        }
+        SetChoice(0);
     }
 
     // Update is called once per frame
@@ -28,11 +24,14 @@ public class BackgroundSwap : MonoBehaviour, SwapInterface
 
     public void SetChoice(int choiceIndex)
     {
-        BackgroundSet newSet = allChoices[choiceIndex].GetComponent<BackgroundSet>();
-        walls[0].GetComponent<Renderer>().material = newSet.wallImage;
-        walls[1].GetComponent<Renderer>().material = newSet.wallImage;
-        walls[2].GetComponent<Renderer>().material = newSet.wallImage;
-        walls[3].GetComponent<Renderer>().material = newSet.floorImage;
+        for(int i=0; i<allChoices.Count; i++) {
+            if(i==choiceIndex) {
+                allChoices[i].SetActive(true);
+            }
+            else {
+                allChoices[i].SetActive(false);
+            }
+        }
         currentChoice = choiceIndex;
     }   
 
